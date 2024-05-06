@@ -10,9 +10,9 @@ const getAllContacts = async (req, res) => {
 };
 
 const getOneContact = async (req, res) => {
-  const { id } = req.params;
+  const { contactId } = req.params;
 
-  const result = await contactsService.getContactById(id);
+  const result = await contactsService.getContactById(contactId);
 
   if (!result) {
     throw HttpError(404, `Not found`);
@@ -22,9 +22,9 @@ const getOneContact = async (req, res) => {
 };
 
 const deleteContact = async (req, res) => {
-  const { id } = req.params;
+  const { contactId } = req.params;
 
-  const result = await contactsService.removeContact(id);
+  const result = await contactsService.removeContact(contactId);
 
   if (!result) {
     throw HttpError(404, "Not found");
@@ -41,13 +41,13 @@ const createContact = async (req, res) => {
 };
 
 const updateContact = async (req, res) => {
-  const { id } = req.params;
+  const { contactId } = req.params;
 
   if (Object.keys(req.body).length === 0) {
     throw HttpError(400, `Body must have at least one field`);
   }
 
-  const result = await contactsService.updateContactById(id, req.body);
+  const result = await contactsService.updateContactById(contactId, req.body);
 
   if (!result) {
     throw HttpError(404, `Not found`);
@@ -57,10 +57,13 @@ const updateContact = async (req, res) => {
 };
 
 const updateStatusContact = async (req, res) => {
-  const { id } = req.params;
+  const { contactId } = req.params;
   const favorite = req.body.favorite;
 
-  const result = await contactsService.updateFavoriteStatus(id, favorite);
+  const result = await contactsService.updateFavoriteStatus(
+    contactId,
+    favorite
+  );
 
   if (!result) {
     throw HttpError(404, "Not found");

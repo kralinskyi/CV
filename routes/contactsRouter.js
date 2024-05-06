@@ -15,9 +15,13 @@ const contactsRouter = express.Router();
 
 contactsRouter.get("/", contactsControllers.getAllContacts);
 
-contactsRouter.get("/:id", isValidId, contactsControllers.getOneContact);
+contactsRouter.get("/:contactId", isValidId, contactsControllers.getOneContact);
 
-contactsRouter.delete("/:id", isValidId, contactsControllers.deleteContact);
+contactsRouter.delete(
+  "/:contactId",
+  isValidId,
+  contactsControllers.deleteContact
+);
 
 contactsRouter.post(
   "/",
@@ -26,14 +30,14 @@ contactsRouter.post(
 );
 
 contactsRouter.put(
-  "/:id",
+  "/:contactId",
   isValidId,
   validateBody(updateContactSchema),
   contactsControllers.updateContact
 );
 
 contactsRouter.patch(
-  "/:id/favorite",
+  "/:contactId/favorite",
   isValidId,
   validateBody(toggleFavoriteSchema),
   contactsControllers.updateStatusContact
