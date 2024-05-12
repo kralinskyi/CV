@@ -10,18 +10,17 @@ import {
 
 import validateBody from "../decorators/validateBody.js";
 import isValidId from "../middlewares/isValidId.js";
+import authenticate from "../middlewares/authenticate.js";
 
 const contactsRouter = express.Router();
 
+contactsRouter.use(authenticate);
+
 contactsRouter.get("/", contactsControllers.getAllContacts);
 
-contactsRouter.get("/:contactId", isValidId, contactsControllers.getOneContact);
+contactsRouter.get("/:id", isValidId, contactsControllers.getOneContact);
 
-contactsRouter.delete(
-  "/:contactId",
-  isValidId,
-  contactsControllers.deleteContact
-);
+contactsRouter.delete("/:id", isValidId, contactsControllers.deleteContact);
 
 contactsRouter.post(
   "/",
@@ -30,14 +29,14 @@ contactsRouter.post(
 );
 
 contactsRouter.put(
-  "/:contactId",
+  "/:id",
   isValidId,
   validateBody(updateContactSchema),
   contactsControllers.updateContact
 );
 
 contactsRouter.patch(
-  "/:contactId/favorite",
+  "/:id/favorite",
   isValidId,
   validateBody(toggleFavoriteSchema),
   contactsControllers.updateStatusContact
