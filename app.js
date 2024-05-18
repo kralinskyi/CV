@@ -31,7 +31,7 @@ mongoose
   })
   .then(() => {
     app.listen(PORT, () => {
-      console.log("Database connection successful");
+      console.log(`Database connection successful at port ${PORT}`);
     });
   })
   .catch((error) => {
