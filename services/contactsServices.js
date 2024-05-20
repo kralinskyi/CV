@@ -1,4 +1,4 @@
-import { Contact } from "../models/contacts.js";
+import { Contact } from "../models/contact.js";
 
 export const listContacts = async (filter = {}) => {
   return Contact.find(filter).populate("owner", "email subscription");

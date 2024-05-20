@@ -1,20 +1,20 @@
-import User from "../models/users.js";
+import { User } from "../models/user.js";
 
 export const signup = async (data) => {
-  const response = await User.create(data);
-  return { email: response.email, subscription: response.subscription };
+  return await User.create(data);
+  // return { email: response.email, subscription: response.subscription };
 };
 
-export const findUser = async (user) => {
-  return await User.findOne(user);
+export const findUser = async (filter) => {
+  return await User.findOne(filter);
 };
 
 export const findUserById = async (id) => {
   return await User.findById(id);
 };
 
-export const updateUser = async (user, data) => {
-  return await User.findByIdAndUpdate(user, data, {
+export const updateUser = async (filter, data) => {
+  return await User.findByIdAndUpdate(filter, data, {
     returnDocument: "after",
-  }).select("email subscription -_id");
+  }).select("email subscription token");
 };
