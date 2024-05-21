@@ -43,7 +43,6 @@ const signin = async (req, res) => {
 
   const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "23h" });
   const response = await authServices.updateUser({ _id: id }, { token });
-  await authServices.updateUser({ _id: id }, { token });
 
   res.status(200).json({
     token,
