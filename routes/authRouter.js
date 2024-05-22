@@ -7,6 +7,7 @@ import { userSigninSchema, userSignupSchema } from "../schemas/usersSchemas.js";
 import validateBody from "../decorators/validateBody.js";
 
 import authenticate from "../middlewares/authenticate.js";
+import upload from "../middlewares/upload.js";
 
 const authRouter = express.Router();
 
@@ -25,5 +26,12 @@ authRouter.post(
 authRouter.get("/current", authenticate, authControllers.getCurrent);
 
 authRouter.post("/logout", authenticate, authControllers.signout);
+
+authRouter.patch(
+  "/avatars",
+  authenticate,
+  upload.single("avatar"),
+  authControllers.updateAvatar
+);
 
 export default authRouter;

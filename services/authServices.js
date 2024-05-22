@@ -2,7 +2,6 @@ import { User } from "../models/user.js";
 
 export const signup = async (data) => {
   return await User.create(data);
-  // return { email: response.email, subscription: response.subscription };
 };
 
 export const findUser = async (filter) => {
