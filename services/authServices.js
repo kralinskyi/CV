@@ -13,7 +13,7 @@ export const findUserById = async (id) => {
 };
 
 export const updateUser = async (filter, data) => {
-  return await User.findByIdAndUpdate(filter, data, {
+  return await User.findOneAndUpdate(filter, data, {
     returnDocument: "after",
   }).select("email subscription token");
 };

@@ -15,3 +15,10 @@ export const userSigninSchema = Joi.object({
 }).error((err) => {
   return new Error("Помилка від Joi або іншої бібліотеки валідації");
 });
+
+export const verifyCheckSchema = Joi.object({
+  email: Joi.string().email().lowercase().trim().required().messages({
+    "any.required": "missing required field email",
+    "string.email": "Помилка від Joi або іншої бібліотеки валідації",
+  }),
+});

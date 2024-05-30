@@ -2,7 +2,11 @@ import express from "express";
 
 import authControllers from "../controllers/authControllers.js";
 
-import { userSigninSchema, userSignupSchema } from "../schemas/usersSchemas.js";
+import {
+  userSigninSchema,
+  userSignupSchema,
+  verifyCheckSchema,
+} from "../schemas/usersSchemas.js";
 
 import validateBody from "../decorators/validateBody.js";
 
@@ -24,7 +28,12 @@ authRouter.post(
 );
 
 authRouter.get("/current", authenticate, authControllers.getCurrent);
-
+authRouter.get("/verify/:verificationToken", authControllers.verifyEmail);
+authRouter.post(
+  "/verify",
+  validateBody(verifyCheckSchema),
+  authControllers.resendVerifyEmail
+);
 authRouter.post("/logout", authenticate, authControllers.signout);
 
 authRouter.patch(

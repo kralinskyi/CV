@@ -6,10 +6,13 @@ import gravatar from "gravatar";
 import Jimp from "jimp";
 import path from "path";
 import fs from "fs/promises";
+import "dotenv/config";
+import sendEmail from "../helpers/mail.js";
 
 import * as authServices from "../services/authServices.js";
+import { nanoid } from "nanoid";
 
-const { JWT_SECRET } = process.env;
+const { JWT_SECRET, PORT } = process.env;
 
 const avatarsPath = path.resolve("public", "avatars");
 
@@ -89,10 +92,51 @@ const updateAvatar = async (req, res) => {
   res.json({ avatarURL });
 };
 
+const verifyEmail = async (req, res) => {
+  const { verificationToken } = req.params;
+
+  const user = await authServices.findUser({ verificationToken });
+  if (!user) {
+    throw HttpError(404, "User not found");
+  }
+
+  await authServices.updateUser(
+    { verificationToken },
+    {
+      verify: true,
+      verificationToken: null,
+    }
+  );
+
+  res.status(200).json({
+    message: "Verifycation successful",
+  });
+};
+
+export const resendVerifyEmail = async (req, res) => {
+  const { email } = req.body;
+  const verifyToken = nanoid();
+
+  const user = await authServices.updateUser(
+    { email, verify: false },
+    { verificationToken: verifyToken }
+  );
+
+  if (!user) {
+    throw HttpError(400, "Verification has already been passed");
+  }
+
+  await sendEmail(email, verifyToken);
+
+  res.status(200).json({ message: "Verification email sent" });
+};
+
 export default {
   signup: ctrlWrapper(signup),
   signin: ctrlWrapper(signin),
   getCurrent: ctrlWrapper(getCurrent),
   signout: ctrlWrapper(signout),
   updateAvatar: ctrlWrapper(updateAvatar),
+  verifyEmail: ctrlWrapper(verifyEmail),
+  resendVerifyEmail: ctrlWrapper(resendVerifyEmail),
 };
