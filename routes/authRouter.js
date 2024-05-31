@@ -28,12 +28,12 @@ authRouter.post(
 );
 
 authRouter.get("/current", authenticate, authControllers.getCurrent);
-authRouter.get("/verify/:verificationToken", authControllers.verifyEmail);
 authRouter.post(
   "/verify",
   validateBody(verifyCheckSchema),
   authControllers.resendVerifyEmail
 );
+authRouter.get("/verify/:verificationToken", authControllers.verifyEmail);
 authRouter.post("/logout", authenticate, authControllers.signout);
 
 authRouter.patch(

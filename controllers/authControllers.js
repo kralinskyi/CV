@@ -12,7 +12,7 @@ import sendEmail from "../helpers/mail.js";
 import * as authServices from "../services/authServices.js";
 import { nanoid } from "nanoid";
 
-const { JWT_SECRET, PORT } = process.env;
+const { JWT_SECRET } = process.env;
 
 const avatarsPath = path.resolve("public", "avatars");
 
@@ -30,13 +30,17 @@ const signup = async (req, res) => {
   }
 
   const hashPassword = await bcrypt.hash(password, 10);
+  const verifyToken = nanoid();
   const avatarURL = gravatar.url(email);
 
   const newUser = await authServices.signup({
     ...req.body,
     password: hashPassword,
     avatarURL,
+    verificationToken: verifyToken,
   });
+
+  await sendEmail(email, verifyToken);
 
   res.status(201).json({ user: newUser });
 };
@@ -48,6 +52,9 @@ const signin = async (req, res) => {
   if (!user || !(await bcrypt.compare(password, user.password))) {
     throw HttpError(401, "Email or password is invalid");
   }
+
+  if (!user.verify)
+    res.status(401).send({ message: "Please verify your email" });
 
   const token = generateToken(user._id);
   await authServices.updateUser({ _id: user._id }, { token });
@@ -96,6 +103,7 @@ const verifyEmail = async (req, res) => {
   const { verificationToken } = req.params;
 
   const user = await authServices.findUser({ verificationToken });
+
   if (!user) {
     throw HttpError(404, "User not found");
   }
@@ -113,7 +121,7 @@ const verifyEmail = async (req, res) => {
   });
 };
 
-export const resendVerifyEmail = async (req, res) => {
+const resendVerifyEmail = async (req, res) => {
   const { email } = req.body;
   const verifyToken = nanoid();
 
